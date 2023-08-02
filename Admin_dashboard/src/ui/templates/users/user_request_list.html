@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Tables {% endblock %}
+
+
+{% block css %}
+<!-- Custom styles for this page -->
+<link href="{% static 'vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block container_fluid %}
+<div class="container-fluid">
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Tables</h1>
+    <p class="mb-4">User Requests</a>.</p>
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">User Requests</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Approval Status</th>
+                            <th>Created Date</th>
+                            <th>Updated Date</th>
+                            {% if user.is_superuser %}
+                            <th>Actions</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+                        {% for user_request in user_requests %}
+                        <tr>
+                            <td>{{ user_request.name }}</td>
+                            <td>{{ user_request.description }}</td>
+                            <td>
+                                {% if user_request.status == 'True' %}
+                                    <span class="badge badge-success">Approved</span>
+                                {% elif user_request.status == 'False' %}
+                                    <span class="badge badge-warning">Pending</span>
+                                {% else %}
+                                    <span class="badge badge-secondary">Unknown</span>
+                                {% endif %}
+                            </td>
+                            
+                            <td>{{ user_request.created_at }}</td>
+                            <td>{{ user_request.updated_at }}</td>
+                            {% if user.is_superuser %}
+                            <td>  
+                                {% if user_request.status == 'True' %}
+                                <span class="badge badge-success">Approved</span>
+                            {% elif user_request.status == 'False' %}
+                                <form method="POST">
+                                    <input type="hidden" name="request_id" value="{{ user_request.id }}" />
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-primary">Approve</button>
+                                </form>
+                            {% else %}
+                                <span class="badge badge-secondary">Unknown</span>
+                            {% endif %}
+                            </td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js_body %}
+<!-- Data Tables -->
+<script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'js/demo/datatables-demo.js' %}"></script>
+<script>
+    $(document).ready(function() {
+          $('#dataTable').DataTable();
+      });
+</script>
+{% endblock %}
