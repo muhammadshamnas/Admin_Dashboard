@@ -26,6 +26,7 @@ SECRET_KEY = 'e@5_iimc81ky$3b33m57_q))&$j*5njp-q$9a*(m(zvw(h%dz#'
 DEBUG = True
 
 ALLOWED_HOSTS = ["13.53.206.179"]
+ALLOWED_HOSTS = ['0.0.0.0']
 
 
 # Application definition
